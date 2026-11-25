@@ -1,0 +1,1 @@
+# synagogue-management-system
