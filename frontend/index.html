@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>מערכת בית כנסת - בדיקת תשתית</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 p-8 flex flex-col items-center">
+  <div class="bg-white p-6 rounded-xl shadow-md max-w-lg w-full">
+    <h1 class="text-2xl font-bold mb-4 text-center">🕍 בדיקת תשתית מקצה לקצה</h1>
+    
+    <!-- חלק בדיקת תקשורת ה-Backend -->
+    <div id="backend-status" class="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded text-center text-sm">
+      בודק חיבור לשרת...
+    </div>
 
+    <!-- טופס הוספת תרומה (קריאה וכתיבה ל-DB) -->
+    <div class="space-y-3 border-t pt-4">
+      <h2 class="font-bold text-slate-700">בדיקת כתיבה: רישום תרומה מהירה</h2>
+      <input id="name" type="text" placeholder="שם התורם (למשל: יאיר)" class="w-full border p-2 rounded text-sm">
+      <input id="amount" type="number" placeholder="סכום (₪)" class="w-full border p-2 rounded text-sm">
+      <button onclick="sendDonation()" class="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-500 font-bold">
+        שלח ל-DB
+      </button>
+    </div>
+
+    <!-- רשימת תרומות אחרונות -->
+    <div class="mt-6 border-t pt-4">
+      <h2 class="font-bold text-slate-700 mb-2">בדיקת קריאה: רשומות מ-Supabase</h2>
+      <ul id="donations-list" class="space-y-1 text-sm text-slate-600">
+        טוען נתונים...
+      </ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
