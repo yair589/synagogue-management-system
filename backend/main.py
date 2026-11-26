@@ -12,23 +12,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-url: str = os.getenv("SUPABASE_URL", "")
-key: str = os.getenv("SUPABASE_KEY", "")
+# ניקוי רווחים וסיומות אם הוכנסו בטעות
+url: str = os.getenv("SUPABASE_URL", "").strip().rstrip("/rest/v1/").rstrip("/")
+key: str = os.getenv("SUPABASE_KEY", "").strip()
 
 supabase = None
-
-# ניסיון התחברות ל-Supabase רק אם הוזן מפתח JWT תקין שמתחיל ב-ey
-if url and key and key.startswith("ey"):
-    try:
+try:
+    if url and key:
         from supabase import create_client
         supabase = create_client(url, key)
-        print("Connected to Supabase successfully!")
-    except Exception as e:
-        print(f"Supabase connection error: {e}")
-else:
-    print("Running in local mock mode (Supabase not configured or key invalid).")
+        print(" Connected to Supabase successfully!")
+except Exception as e:
+    print(f" Supabase error: {e}")
 
-# רשימת דמה מקומית לגיבוי במידה ו-Supabase עדיין לא מוגדר
+# רשימת דמה לגיבוי
 mock_donations = [
     {"donor_name": "יאיר ליברמן", "amount": 180},
     {"donor_name": "מיכאל מושקוביץ", "amount": 360}
@@ -47,9 +44,10 @@ def get_donations():
     if supabase:
         try:
             res = supabase.table("quick_donations").select("*").order("created_at", desc=True).limit(5).execute()
-            return res.data
+            if res.data:
+                return res.data
         except Exception as e:
-            print(f"DB Error: {e}")
+            print(f"DB Fetch Error: {e}")
     return mock_donations
 
 @app.post("/api/donations")
@@ -62,9 +60,8 @@ def add_donation(donation: DonationCreate):
             }).execute()
             return {"status": "success", "data": res.data}
         except Exception as e:
-            print(f"DB Error: {e}")
-            
-    # שמירה מקומית אם אין DB פעיל כרגע
+            print(f"DB Insert Error: {e}")
+
     new_entry = {"donor_name": donation.donor_name, "amount": donation.amount}
     mock_donations.insert(0, new_entry)
     return {"status": "success", "data": [new_entry]}
